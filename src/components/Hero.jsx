@@ -9,7 +9,58 @@ const Hero = () => {
  
  const isMobile = useMediaQuery({ maxWidth: 767 });
  
- 
+ useGSAP(()=>{
+	const titleSplit = new SplitText('.title', {type: 'chars, words'});
+	const subtitleSplit = new SplitText('.subtitle', {type: 'lines'});
+
+	titleSplit.chars.forEach((char)=>char.classList.add('text-gradient'))
+
+	gsap.from(titleSplit.chars,{
+		yPercent:100,
+		duration:1.5,
+		stagger:0.06,
+		ease: "elastic.out(1,0.3)",
+	})
+
+	gsap.from(subtitleSplit.lines,{
+		yPercent:100,
+		opacity:0,
+		stagger:0.06,
+		ease:"expo.out",
+		duration:1.5,
+		delay:1
+	})
+
+	gsap.timeline({
+		scrollTrigger:{
+			trigger:"#hero",
+			start: 'top top',
+			end:"bottom top",
+			scrub:true,
+		}		
+	})
+	.to('.left-leaf',{y:200},0)
+	.to('.right-leaf',{y: -200},0)
+
+	const startvalue = isMobile ? 'top 50%' : "center 60%"
+	const endValue = isMobile? "120% top": "bottom top"
+
+	const tl = gsap.timeline({
+		scrollTrigger:{
+			trigger : 'video',
+			start: startvalue,
+			end: endValue,
+			scrub: true,
+			pin:true,
+		}
+	})
+
+	videoRef.current.onloadedmetadata =()=>{
+		tl.to(videoRef.current,{
+			currentTime: videoRef.current.duration
+		})
+	}
+ },[])
  
  return (
 	<>
